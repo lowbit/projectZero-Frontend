@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Moment from 'react-moment';
+import { format } from 'date-fns'
 
 class GameCard extends Component {
     constructor() {
@@ -14,10 +14,12 @@ class GameCard extends Component {
         this.setState({
             game:this.props.game,
             cursor:'default',
+            backgroundImageLocation: `${process.env.REACT_APP_API_URL}${this.props.game.imgPath}`,
             backgroundImage:`linear-gradient(
                 rgba(0, 0, 0, 0.5), 
                 rgba(0, 0, 0, 0.5)
-              ),url(${process.env.REACT_APP_API_URL}${this.props.game.imgPath})`
+              ),url(${process.env.REACT_APP_API_URL}${this.props.game.imgPath})`,
+              formattedDate: format(new Date(this.props.game.releaseDate), "yyyy-MM-dd")
         })
     }
     onMouseEnter() {
@@ -26,7 +28,7 @@ class GameCard extends Component {
             backgroundImage:`linear-gradient(
                 rgba(0, 0, 0, 0.3), 
                 rgba(0, 0, 0, 0.3)
-              ),url(${process.env.REACT_APP_API_URL}${this.props.game.imgPath})`
+              ),url(${this.state.backgroundImageLocation})`
         })
     }
     
@@ -36,7 +38,7 @@ class GameCard extends Component {
             backgroundImage:`linear-gradient(
                 rgba(0, 0, 0, 0.5), 
                 rgba(0, 0, 0, 0.5)
-              ),url(${process.env.REACT_APP_API_URL}${this.props.game.imgPath})`
+              ),url(${this.state.backgroundImageLocation})`
         })
     }
     render() {
@@ -48,13 +50,13 @@ class GameCard extends Component {
             backgroundPosition:'center',
             backgroundImage: this.state.backgroundImage
             };
-        const game = this.state.game;
+        const { game,formattedDate } = this.state;
       return (
         <div key={game.id} style={gameCardBG}
         onMouseEnter={() => this.onMouseEnter()} onMouseLeave={() => this.onMouseLeave()}>
           <h2>{game.title}</h2>
           <p>{game.description}</p>
-          <p><Moment format="DD.MMMM YYYY">{game.releaseDate}</Moment></p>
+          <p>{formattedDate}</p>
         </div>
       );
     }

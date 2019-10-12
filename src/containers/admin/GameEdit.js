@@ -4,6 +4,7 @@ import { TextField, Typography, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Container  from '@material-ui/core/Container';
 import DateFnsUtils from '@date-io/date-fns';
+import { format } from 'date-fns'
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import clsx from 'clsx';
 import SaveIcon from '@material-ui/icons/Save';
@@ -29,15 +30,13 @@ class GameEdit extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            game:{
-                id:'',
-                title:'',
-                description:'',
-                imgPath:'',
-                releaseDate:'',
-                createdAt:'',
-                updatedAt:''
-            }}
+            id:'',
+            title:'',
+            description:'',
+            imgPath:'',
+            releaseDate:'',
+            createdAt:new Date(),
+            updatedAt:'',}
     }
     async componentDidMount() {
         
@@ -47,7 +46,13 @@ class GameEdit extends Component {
             .get(process.env.REACT_APP_API_URL+'/getGame/'+id)
             .then((res)=>{
                 this.setState({
-                    game:res.data.game
+                    id: res.data.game.id,
+                    title: res.data.game.title,
+                    description: res.data.game.description,
+                    imgPath: res.data.game.imgPath,
+                    releaseDate: res.data.game.releaseDate,
+                    createdAt: res.data.game.createdAt,
+                    updatedAt: res.data.game.updatedAt
                 })
             }).catch((err)=>{
                 console.error(err.response.data);
@@ -56,16 +61,19 @@ class GameEdit extends Component {
                 });
             });
         }
+    }  
+    handleCreatedAtChange = (event) => {
+        this.setState({
+            createdAt:format(new Date(event), "yyyy-MM-dd")
+        });
     }
     
     
     render() { 
-        const { game } = this.state;
+        const { id, title, description, imgPath, releaseDate, createdAt, updatedAt } = this.state;
         const { classes } = this.props;
         
-    function handleCreatedAtChange(date) {
-        game.createdAt=React.useState(new Date(date));
-    }
+    
     function save() {
         console.log('aa');
     }
@@ -73,43 +81,48 @@ class GameEdit extends Component {
             <div>
                 <Container maxWidth="sm">
                 <Typography component="h1" variant="h5">
-                        {game.title}
+                        {title}
                 </Typography>
                 <form className={classes.container} noValidate autoComplete="off">
-                    <TextField disabled noValidate autoComplete="off"
+                    <TextField disabled
                         id="id"
                         label="Id"
-                        value={game.id}
+                        value={id}
+                        onChange = {(e) => this.setState({id:e.target.value})}
                         margin="normal"
                         fullWidth
                     />
-                    <TextField noValidate autoComplete="off"
+                    <TextField
                         id="title"
                         label="Title"
-                        value={game.title}
+                        value={title}
+                        onChange = {(e) => this.setState({title:e.target.value})}
                         margin="normal"
                         fullWidth
                     />
-                    <TextField noValidate autoComplete="off"
+                    <TextField
                         id="description"
                         label="Description"
                         multiline
                         rows="3"
-                        value={game.description}
+                        value={description}
+                        onChange = {(e) => this.setState({description:e.target.value})}
                         margin="normal"
                         fullWidth
                     />
-                    <TextField noValidate autoComplete="off"
+                    <TextField
                         id="imgPath"
                         label="Image Path"
-                        value={game.imgPath}
+                        value={imgPath}
+                        onChange = {(e) => this.setState({imgPath:e.target.value})}
                         margin="normal"
                         fullWidth
                     />
-                    <TextField noValidate autoComplete="off"
+                    <TextField
                         id="releaseDate"
                         label="Release Date"
-                        value={game.releaseDate}
+                        value={releaseDate}
+                        onChange = {(e) => this.setState({releaseDate:e.target.value})}
                         type="date"
                         margin="normal"
                         fullWidth
@@ -120,8 +133,8 @@ class GameEdit extends Component {
                             margin="normal"
                             id="mui-pickers-date"
                             label="Date picker"
-                            value={game.createdAt}
-                            onChange={handleCreatedAtChange}
+                            value={createdAt}
+                            onChange = {(e) => this.setState({createdAt:format(new Date(e), "yyyy-MM-dd")})}
                             KeyboardButtonProps={{
                                 'aria-label': 'change date',
                             }}
@@ -131,7 +144,8 @@ class GameEdit extends Component {
                     <TextField disabled noValidate autoComplete="off"
                         id="updatedAt"
                         label="Updated At"
-                        value={game.updatedAt}
+                        value={updatedAt}
+                        onChange = {(e) => this.setState({updatedAt:e.target.value})}
                         type="date"
                         margin="normal"
                         fullWidth
