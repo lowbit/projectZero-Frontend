@@ -7,8 +7,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountBoxIco from '@material-ui/icons/AccountBox'
 
-var username = 'a';
-
 class UserMenu extends React.Component {
   state = {
     anchorEl: null,

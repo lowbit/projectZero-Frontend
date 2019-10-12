@@ -19,7 +19,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
   },
   title: {
-    margin: `${theme.spacing.unit * 4}px 0 ${theme.spacing.unit * 2}px`,
+    margin: `${theme.spacing(4)}px 0 ${theme.spacing(2)}px`,
   },
 });
 class AdminHome extends Component {

@@ -2,14 +2,20 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { TextField, Typography, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import Container  from '@material-ui/core/Container';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import clsx from 'clsx';
+import SaveIcon from '@material-ui/icons/Save';
+
 const styles = theme => ({
     container: {
       display: 'flex',
       flexWrap: 'wrap',
     },
     textField: {
-      marginLeft: theme.spacing.unit,
-      marginRight: theme.spacing.unit,
+      marginLeft: theme.spacing(),
+      marginRight: theme.spacing(),
       width: 200,
     },
     dense: {
@@ -51,13 +57,21 @@ class GameEdit extends Component {
             });
         }
     }
+    
+    
     render() { 
-        const {game} = this.state;
+        const { game } = this.state;
         const { classes } = this.props;
         
+    function handleCreatedAtChange(date) {
+        game.createdAt=React.useState(new Date(date));
+    }
+    function save() {
+        console.log('aa');
+    }
         return ( 
             <div>
-                
+                <Container maxWidth="sm">
                 <Typography component="h1" variant="h5">
                         {game.title}
                 </Typography>
@@ -67,14 +81,14 @@ class GameEdit extends Component {
                         label="Id"
                         value={game.id}
                         margin="normal"
-                        className={classes.textField}
+                        fullWidth
                     />
                     <TextField noValidate autoComplete="off"
                         id="title"
                         label="Title"
                         value={game.title}
                         margin="normal"
-                        className={classes.textField}
+                        fullWidth
                     />
                     <TextField noValidate autoComplete="off"
                         id="description"
@@ -83,14 +97,14 @@ class GameEdit extends Component {
                         rows="3"
                         value={game.description}
                         margin="normal"
-                        className={classes.textField}
+                        fullWidth
                     />
                     <TextField noValidate autoComplete="off"
                         id="imgPath"
                         label="Image Path"
                         value={game.imgPath}
                         margin="normal"
-                        className={classes.textField}
+                        fullWidth
                     />
                     <TextField noValidate autoComplete="off"
                         id="releaseDate"
@@ -98,34 +112,36 @@ class GameEdit extends Component {
                         value={game.releaseDate}
                         type="date"
                         margin="normal"
-                        className={classes.textField}
+                        fullWidth
                     />
-                    <TextField disabled noValidate autoComplete="off"
-                        id="createdAt"
-                        label="createdAt"
-                        value={game.createdAt}
-                        type="date"
-                        margin="normal"
-                        className={classes.textField}
-                    />
+                    
+                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <KeyboardDatePicker
+                            margin="normal"
+                            id="mui-pickers-date"
+                            label="Date picker"
+                            value={game.createdAt}
+                            onChange={handleCreatedAtChange}
+                            KeyboardButtonProps={{
+                                'aria-label': 'change date',
+                            }}
+                            fullWidth
+                        />
+                    </MuiPickersUtilsProvider>
                     <TextField disabled noValidate autoComplete="off"
                         id="updatedAt"
                         label="Updated At"
                         value={game.updatedAt}
                         type="date"
                         margin="normal"
-                        className={classes.textField}
-                    />
-                    <Button
-                        type="submit"
                         fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                    Add
+                    />
+                    <Button variant="contained" size="small" className={classes.button} onClick={save}>
+                        <SaveIcon className={clsx(classes.leftIcon, classes.iconSmall)} />
+                        Save
                     </Button>
                 </form>
+                </Container>
             </div>
         );
     }
