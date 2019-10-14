@@ -3,11 +3,11 @@ import axios from 'axios';
 import { TextField, Typography, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import Container  from '@material-ui/core/Container';
-import DateFnsUtils from '@date-io/date-fns';
-import { format } from 'date-fns'
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
+import { format } from 'date-fns';
 import clsx from 'clsx';
 import SaveIcon from '@material-ui/icons/Save';
+import BasicDatePicker from '../../components/BasicDatePicker';
+import ImgHandler from '../../components/ImgHandler';
 
 const styles = theme => ({
     container: {
@@ -36,7 +36,9 @@ class GameEdit extends Component {
             imgPath:'',
             releaseDate:'',
             createdAt:new Date(),
-            updatedAt:'',}
+            updatedAt:'',
+        }
+        this.handleInputChange = this.handleInputChange.bind(this);
     }
     async componentDidMount() {
         
@@ -61,7 +63,24 @@ class GameEdit extends Component {
                 });
             });
         }
-    }  
+    }
+    
+    handleInputChange(event,dateName) {
+        if(!dateName) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value
+        });
+    } else {
+        this.setState({
+            [dateName]: format(new Date(event), "yyyy-MM-dd")
+        });
+    }
+    }
+    
     handleCreatedAtChange = (event) => {
         this.setState({
             createdAt:format(new Date(event), "yyyy-MM-dd")
@@ -88,7 +107,8 @@ class GameEdit extends Component {
                         id="id"
                         label="Id"
                         value={id}
-                        onChange = {(e) => this.setState({id:e.target.value})}
+                        name="id"
+                        onChange = {this.handleInputChange}
                         margin="normal"
                         fullWidth
                     />
@@ -96,7 +116,8 @@ class GameEdit extends Component {
                         id="title"
                         label="Title"
                         value={title}
-                        onChange = {(e) => this.setState({title:e.target.value})}
+                        name="title"
+                        onChange = {this.handleInputChange}
                         margin="normal"
                         fullWidth
                     />
@@ -106,49 +127,36 @@ class GameEdit extends Component {
                         multiline
                         rows="3"
                         value={description}
-                        onChange = {(e) => this.setState({description:e.target.value})}
+                        name ="description"
+                        onChange = {this.handleInputChange}
                         margin="normal"
                         fullWidth
                     />
-                    <TextField
-                        id="imgPath"
+                    <ImgHandler
                         label="Image Path"
                         value={imgPath}
-                        onChange = {(e) => this.setState({imgPath:e.target.value})}
-                        margin="normal"
-                        fullWidth
                     />
-                    <TextField
-                        id="releaseDate"
+                    <BasicDatePicker
                         label="Release Date"
+                        name="releaseDate"
                         value={releaseDate}
-                        onChange = {(e) => this.setState({releaseDate:e.target.value})}
-                        type="date"
+                        onChange= {this.handleInputChange}
                         margin="normal"
-                        fullWidth
                     />
-                    
-                    <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                        <KeyboardDatePicker
-                            margin="normal"
-                            id="mui-pickers-date"
-                            label="Date picker"
-                            value={createdAt}
-                            onChange = {(e) => this.setState({createdAt:format(new Date(e), "yyyy-MM-dd")})}
-                            KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                            }}
-                            fullWidth
-                        />
-                    </MuiPickersUtilsProvider>
-                    <TextField disabled noValidate autoComplete="off"
-                        id="updatedAt"
-                        label="Updated At"
-                        value={updatedAt}
-                        onChange = {(e) => this.setState({updatedAt:e.target.value})}
-                        type="date"
+                    <BasicDatePicker
+                        label="Created At"
+                        name="createdAt"
+                        value={createdAt}
+                        onChange= {this.handleInputChange}
                         margin="normal"
-                        fullWidth
+                    />
+                    <BasicDatePicker
+                        label="Modified At"
+                        name="updatedAt"
+                        value={updatedAt}
+                        onChange= {this.handleInputChange}
+                        margin="normal"
+                        disabled
                     />
                     <Button variant="contained" size="small" className={classes.button} onClick={save}>
                         <SaveIcon className={clsx(classes.leftIcon, classes.iconSmall)} />
