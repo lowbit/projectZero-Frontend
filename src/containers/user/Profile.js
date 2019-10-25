@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import Table from '@material-ui/core/Table';
 import Button from '@material-ui/core/Button';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
@@ -16,19 +16,17 @@ import {
   deleteButton,
   updateButton,
   loginButton,
-  logoutButton,
   HeaderBar,
-  linkStyle,
-  forgotButton,
+  forgotButton
 } from '../../components';
 
 const loading = {
   margin: '1em',
-  fontSize: '24px',
+  fontSize: '24px'
 };
 
 const title = {
-  pageTitle: 'User Profile Screen',
+  pageTitle: 'User Profile Screen'
 };
 
 class Profile extends Component {
@@ -41,7 +39,7 @@ class Profile extends Component {
       password: '',
       isLoading: true,
       deleted: false,
-      error: false,
+      error: false
     };
   }
 
@@ -50,82 +48,75 @@ class Profile extends Component {
     if (accessString == null) {
       this.setState({
         isLoading: false,
-        error: true,
+        error: true
       });
     } else {
       await axios
-        .get(process.env.REACT_APP_API_URL+'/findUser', {
+        .get(process.env.REACT_APP_API_URL + '/findUser', {
           params: {
-            username: this.props.match.params.username,
+            username: this.props.match.params.username
           },
-          headers: { Authorization: `JWT ${accessString}` },
+          headers: { Authorization: `JWT ${accessString}` }
         })
-        .then((response) => {
+        .then(response => {
           this.setState({
             email: response.data.email,
             username: response.data.username,
             password: response.data.password,
             isLoading: false,
-            error: false,
+            error: false
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error.response.data);
           this.setState({
-            error: true,
+            error: true
           });
         });
     }
   }
 
-  deleteUser = (e) => {
+  deleteUser = e => {
     const accessString = localStorage.getItem('JWT');
     if (accessString === null) {
       this.setState({
         isLoading: false,
-        error: true,
+        error: true
       });
     }
 
     e.preventDefault();
     axios
-      .delete(process.env.REACT_APP_API_URL+'/deleteUser', {
+      .delete(process.env.REACT_APP_API_URL + '/deleteUser', {
         params: {
-          username: this.props.match.params.username,
+          username: this.props.match.params.username
         },
-        headers: { Authorization: `JWT ${accessString}` },
+        headers: { Authorization: `JWT ${accessString}` }
       })
-      .then((response) => {
+      .then(response => {
         console.log(response.data);
         localStorage.removeItem('JWT');
         localStorage.removeItem('username');
         this.setState({
-          deleted: true,
+          deleted: true
         });
       })
-      .catch((error) => {
+      .catch(error => {
         console.error(error.response.data);
         this.setState({
-          error: true,
+          error: true
         });
       });
   };
 
-  logout = (e) => {
+  logout = e => {
     e.preventDefault();
     localStorage.removeItem('JWT');
     localStorage.removeItem('username');
   };
 
   render() {
-    const {
-      email,
-      username,
-      password,
-      error,
-      isLoading,
-      deleted,
-    } = this.state;
+    const { email, username, password, error, isLoading, deleted } = this.state;
 
     if (error) {
       return (
@@ -201,9 +192,9 @@ Profile.propTypes = {
   // eslint-disable-next-line react/require-default-props
   match: PropTypes.shape({
     params: PropTypes.shape({
-      username: PropTypes.string.isRequired,
-    }),
-  }),
+      username: PropTypes.string.isRequired
+    })
+  })
 };
 
 export default Profile;
