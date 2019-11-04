@@ -1,6 +1,6 @@
-import React, { Fragment } from 'react';
-import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
+import React, { Fragment } from "react";
+import PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
 
 const SubmitButtons = ({ buttonText, buttonStyle }) => (
   <Fragment>
@@ -18,7 +18,7 @@ const SubmitButtons = ({ buttonText, buttonStyle }) => (
 SubmitButtons.propTypes = {
   buttonText: PropTypes.string.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
-  buttonStyle: PropTypes.object.isRequired,
+  buttonStyle: PropTypes.object.isRequired
 };
 
 export default SubmitButtons;

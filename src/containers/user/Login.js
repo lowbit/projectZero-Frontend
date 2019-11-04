@@ -1,77 +1,85 @@
 /* eslint-disable no-console */
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
+import React, { Component, Fragment } from "react";
+import { Redirect } from "react-router-dom";
+import { TextField, Grid, Card, CardActions, Button } from "@material-ui/core";
+import { withStyles } from "@material-ui/core/styles";
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 import {
   LinkButtons,
   SubmitButtons,
   registerButton,
-  homeButton,
   loginButton,
   forgotButton,
-  inputStyle,
-  HeaderBar,
-} from '../../components';
+  inputStyle
+} from "../../components";
 
-const title = {
-  pageTitle: 'Login Screen',
+const styles = theme => ({
+  CardActions: {
+    justifyContent: "right",
+    width: "100%"
+  }
+});
+
+const headerTitle = {
+  pageTitle: "Login Screen"
 };
 
 class Login extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       loggedIn: false,
       showError: false,
-      showNullError: false,
+      showNullError: false
     };
+    this.props.setHeader(headerTitle);
   }
 
-  handleChange = name => (event) => {
+  handleChange = name => event => {
     this.setState({
-      [name]: event.target.value,
+      [name]: event.target.value
     });
   };
 
-  loginUser = (e) => {
+  loginUser = e => {
     e.preventDefault();
     const { username, password } = this.state;
-    if (username === '' || password === '') {
+    if (username === "" || password === "") {
       this.setState({
         showError: false,
         showNullError: true,
-        loggedIn: false,
+        loggedIn: false
       });
     } else {
       axios
-        .post(process.env.REACT_APP_API_URL+'/loginUser', {
+        .post(process.env.REACT_APP_API_URL + "/loginUser", {
           username,
-          password,
+          password
         })
-        .then((response) => {
+        .then(response => {
           // console.log(response.data);
-          localStorage.setItem('JWT', response.data.token);
-          localStorage.setItem('username', username);
+          localStorage.setItem("JWT", response.data.token);
+          localStorage.setItem("username", username);
           this.setState({
             loggedIn: true,
             showError: false,
-            showNullError: false,
+            showNullError: false
           });
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error.response.data);
           if (
-            error.response.data === 'bad username'
-            || error.response.data === 'passwords do not match'
+            error.response.data === "bad username" ||
+            error.response.data === "passwords do not match"
           ) {
             this.setState({
               showError: true,
-              showNullError: false,
+              showNullError: false
             });
           }
         });
@@ -84,61 +92,88 @@ class Login extends Component {
       password,
       showError,
       loggedIn,
-      showNullError,
+      showNullError
     } = this.state;
+    const { classes } = this.props;
     if (!loggedIn) {
       return (
-        <div>
-          <HeaderBar title={title} />
-          <form className="profile-form" onSubmit={this.loginUser}>
-            <TextField
-              style={inputStyle}
-              id="username"
-              label="username"
-              value={username}
-              onChange={this.handleChange('username')}
-              placeholder="Username"
-            />
-            <TextField
-              style={inputStyle}
-              id="password"
-              label="password"
-              value={password}
-              onChange={this.handleChange('password')}
-              placeholder="Password"
-              type="password"
-            />
-            <SubmitButtons buttonStyle={loginButton} buttonText="Login" />
-          </form>
-          {showNullError && (
-            <div>
-              <p>The username or password cannot be null.</p>
-            </div>
-          )}
-          {showError && (
-            <div>
-              <p>
-                That username or password isn&apos;t recognized. Please try
-                again or register now.
-              </p>
-              <LinkButtons
-                buttonText="Register"
-                buttonStyle={registerButton}
-                link="/register"
-              />
-            </div>
-          )}
-          <LinkButtons buttonText="Go Home" buttonStyle={homeButton} link="/" />
-          <LinkButtons
-            buttonStyle={forgotButton}
-            buttonText="Forgot Password?"
-            link="/forgotPassword"
-          />
-        </div>
+        <Fragment>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+          >
+            <Card>
+              <form className="profile-form" onSubmit={this.loginUser}>
+                <TextField
+                  style={inputStyle}
+                  id="username"
+                  label="username"
+                  value={username}
+                  onChange={this.handleChange("username")}
+                  placeholder="Username"
+                  fullWidth
+                />
+                <TextField
+                  style={inputStyle}
+                  id="password"
+                  label="password"
+                  value={password}
+                  onChange={this.handleChange("password")}
+                  placeholder="Password"
+                  type="password"
+                  fullWidth
+                />
+
+                <CardActions>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    className={classes.button}
+                    type="submit"
+                  >
+                    Login
+                  </Button>
+
+                  <Link to={`/forgotPassword`}>
+                    <Button
+                      variant="text"
+                      size="small"
+                      className={classes.button}
+                    >
+                      Forgot Password
+                    </Button>
+                  </Link>
+                </CardActions>
+              </form>
+              {showNullError && (
+                <div>
+                  <p>The username or password cannot be null.</p>
+                </div>
+              )}
+              {showError && (
+                <div>
+                  <p>
+                    That username or password isn&apos;t recognized. Please try
+                    again or register now.
+                  </p>
+                  <LinkButtons
+                    buttonText="Register"
+                    buttonStyle={registerButton}
+                    link="/register"
+                  />
+                </div>
+              )}
+            </Card>
+          </Grid>
+        </Fragment>
       );
     }
     return <Redirect to={`/admin`} />;
   }
 }
 
-export default Login;
+export default withStyles(styles)(Login);

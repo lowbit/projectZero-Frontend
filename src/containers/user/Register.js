@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
-import React, { Component } from 'react';
-import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
+import React, { Component } from "react";
+import TextField from "@material-ui/core/TextField";
+import axios from "axios";
 
 import {
   LinkButtons,
@@ -10,12 +10,11 @@ import {
   registerButton,
   homeButton,
   loginButton,
-  inputStyle,
-  HeaderBar,
-} from '../../components';
+  inputStyle
+} from "../../components";
 
-const title = {
-  pageTitle: 'Register Screen',
+const headerTitle = {
+  pageTitle: "Register Screen"
 };
 
 class Register extends Component {
@@ -23,37 +22,38 @@ class Register extends Component {
     super(props);
 
     this.state = {
-      email: '',
-      username: '',
-      password: '',
-      messageFromServer: '',
+      email: "",
+      username: "",
+      password: "",
+      messageFromServer: "",
       showError: false,
       registerError: false,
-      loginError: false,
+      loginError: false
     };
+    this.props.setHeader(headerTitle);
   }
 
   handleChange = name => event => {
     this.setState({
-      [name]: event.target.value,
+      [name]: event.target.value
     });
   };
 
   registerUser = e => {
     e.preventDefault();
     const { username, password, email } = this.state;
-    if (username === '' || password === '' || email === '') {
+    if (username === "" || password === "" || email === "") {
       this.setState({
         showError: true,
         loginError: false,
-        registerError: true,
+        registerError: true
       });
     } else {
       axios
-        .post(process.env.REACT_APP_API_URL+'/registerUser', {
+        .post(process.env.REACT_APP_API_URL + "/registerUser", {
           email,
           username,
-          password,
+          password
         })
         .then(response => {
           // console.log(response.data.message);
@@ -61,23 +61,22 @@ class Register extends Component {
             messageFromServer: response.data.message,
             showError: false,
             loginError: false,
-            registerError: false,
+            registerError: false
           });
         })
         .catch(error => {
           console.error(error.response.data);
-          if (error.response.data === 'username or email already taken') {
+          if (error.response.data === "username or email already taken") {
             this.setState({
               showError: true,
               loginError: true,
-              registerError: false,
+              registerError: false
             });
           }
         });
     }
   };
 
-  // eslint-disable-next-line consistent-return
   render() {
     const {
       email,
@@ -86,20 +85,19 @@ class Register extends Component {
       messageFromServer,
       showError,
       loginError,
-      registerError,
+      registerError
     } = this.state;
 
-    if (messageFromServer === '') {
+    if (messageFromServer === "") {
       return (
         <div>
-          <HeaderBar title={title} />
           <form className="profile-form" onSubmit={this.registerUser}>
             <TextField
               style={inputStyle}
               id="email"
               label="email"
               value={email}
-              onChange={this.handleChange('email')}
+              onChange={this.handleChange("email")}
               placeholder="Email"
             />
             <TextField
@@ -107,7 +105,7 @@ class Register extends Component {
               id="username"
               label="username"
               value={username}
-              onChange={this.handleChange('username')}
+              onChange={this.handleChange("username")}
               placeholder="Username"
             />
             <TextField
@@ -115,7 +113,7 @@ class Register extends Component {
               id="password"
               label="password"
               value={password}
-              onChange={this.handleChange('password')}
+              onChange={this.handleChange("password")}
               placeholder="Password"
               type="password"
             />
@@ -143,10 +141,9 @@ class Register extends Component {
         </div>
       );
     }
-    if (messageFromServer === 'user created') {
+    if (messageFromServer === "user created") {
       return (
         <div>
-          <HeaderBar title={title} />
           <h3>User successfully registered!</h3>
           <LinkButtons
             buttonText="Go Login"

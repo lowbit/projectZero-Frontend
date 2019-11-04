@@ -1,70 +1,70 @@
 /* eslint-disable no-console */
-import React, { Component } from 'react';
-import TextField from '@material-ui/core/TextField';
-import axios from 'axios';
+import React, { Component } from "react";
+import TextField from "@material-ui/core/TextField";
+import axios from "axios";
 import {
   LinkButtons,
   SubmitButtons,
   registerButton,
   homeButton,
   forgotButton,
-  inputStyle,
-  HeaderBar,
-} from '../../components';
+  inputStyle
+} from "../../components";
 
-const title = {
-  pageTitle: 'Forgot Password Screen',
+const headerTitle = {
+  pageTitle: "Forgot Password Screen"
 };
 
 class ForgotPassword extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      email: '',
+      email: "",
       showError: false,
-      messageFromServer: '',
-      showNullError: false,
+      messageFromServer: "",
+      showNullError: false
     };
+    this.props.setHeader(headerTitle);
   }
 
-  handleChange = name => (event) => {
+  handleChange = name => event => {
     this.setState({
-      [name]: event.target.value,
+      [name]: event.target.value
     });
   };
 
-  sendEmail = (e) => {
+  sendEmail = e => {
     e.preventDefault();
     const { email } = this.state;
-    if (email === '') {
+    if (email === "") {
       this.setState({
         showError: false,
-        messageFromServer: '',
-        showNullError: true,
+        messageFromServer: "",
+        showNullError: true
       });
     } else {
       axios
-        .post(process.env.REACT_APP_API_URL+'/forgotPassword', {
-          email,
+        .post(process.env.REACT_APP_API_URL + "/forgotPassword", {
+          email
         })
-        .then((response) => {
+        .then(response => {
           console.log(response.data);
-          if (response.data === 'recovery email sent') {
+          if (response.data === "recovery email sent") {
             this.setState({
               showError: false,
-              messageFromServer: 'recovery email sent',
-              showNullError: false,
+              messageFromServer: "recovery email sent",
+              showNullError: false
             });
           }
         })
-        .catch((error) => {
+        .catch(error => {
           console.error(error.response.data);
-          if (error.response.data === 'email not in db') {
+          if (error.response.data === "email not in db") {
             this.setState({
               showError: true,
-              messageFromServer: '',
-              showNullError: false,
+              messageFromServer: "",
+              showNullError: false
             });
           }
         });
@@ -72,20 +72,17 @@ class ForgotPassword extends Component {
   };
 
   render() {
-    const {
- email, messageFromServer, showNullError, showError 
-} = this.state;
+    const { email, messageFromServer, showNullError, showError } = this.state;
 
     return (
       <div>
-        <HeaderBar title={title} />
         <form className="profile-form" onSubmit={this.sendEmail}>
           <TextField
             style={inputStyle}
             id="email"
             label="email"
             value={email}
-            onChange={this.handleChange('email')}
+            onChange={this.handleChange("email")}
             placeholder="Email Address"
           />
           <SubmitButtons
@@ -111,7 +108,7 @@ class ForgotPassword extends Component {
             />
           </div>
         )}
-        {messageFromServer === 'recovery email sent' && (
+        {messageFromServer === "recovery email sent" && (
           <div>
             <h3>Password Reset Email Successfully Sent!</h3>
           </div>

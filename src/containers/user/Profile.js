@@ -1,50 +1,52 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable camelcase */
 /* eslint-disable no-console */
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
-import Table from '@material-ui/core/Table';
-import Button from '@material-ui/core/Button';
-import { Redirect } from 'react-router-dom';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableRow from '@material-ui/core/TableRow';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+import Table from "@material-ui/core/Table";
+import Button from "@material-ui/core/Button";
+import { Redirect } from "react-router-dom";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
 
 import {
   LinkButtons,
   deleteButton,
   updateButton,
   loginButton,
-  HeaderBar,
   forgotButton
-} from '../../components';
+} from "../../components";
 
 const loading = {
-  margin: '1em',
-  fontSize: '24px'
+  margin: "1em",
+  fontSize: "24px"
 };
 
-const title = {
-  pageTitle: 'User Profile Screen'
+const headerTitle = {
+  pageTitle: "User Profile Screen"
 };
 
 class Profile extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      email: '',
-      username: '',
-      password: '',
+      email: "",
+      username: "",
+      password: "",
       isLoading: true,
       deleted: false,
       error: false
     };
+    this.props.setHeader(headerTitle);
   }
 
   async componentDidMount() {
-    const accessString = localStorage.getItem('JWT');
+    //console.log(this.props.match.params.username);
+
+    const accessString = localStorage.getItem("JWT");
     if (accessString == null) {
       this.setState({
         isLoading: false,
@@ -52,7 +54,7 @@ class Profile extends Component {
       });
     } else {
       await axios
-        .get(process.env.REACT_APP_API_URL + '/findUser', {
+        .get(process.env.REACT_APP_API_URL + "/findUser", {
           params: {
             username: this.props.match.params.username
           },
@@ -77,7 +79,7 @@ class Profile extends Component {
   }
 
   deleteUser = e => {
-    const accessString = localStorage.getItem('JWT');
+    const accessString = localStorage.getItem("JWT");
     if (accessString === null) {
       this.setState({
         isLoading: false,
@@ -87,7 +89,7 @@ class Profile extends Component {
 
     e.preventDefault();
     axios
-      .delete(process.env.REACT_APP_API_URL + '/deleteUser', {
+      .delete(process.env.REACT_APP_API_URL + "/deleteUser", {
         params: {
           username: this.props.match.params.username
         },
@@ -95,8 +97,8 @@ class Profile extends Component {
       })
       .then(response => {
         console.log(response.data);
-        localStorage.removeItem('JWT');
-        localStorage.removeItem('username');
+        localStorage.removeItem("JWT");
+        localStorage.removeItem("username");
         this.setState({
           deleted: true
         });
@@ -111,8 +113,8 @@ class Profile extends Component {
 
   logout = e => {
     e.preventDefault();
-    localStorage.removeItem('JWT');
-    localStorage.removeItem('username');
+    localStorage.removeItem("JWT");
+    localStorage.removeItem("username");
   };
 
   render() {
@@ -121,7 +123,6 @@ class Profile extends Component {
     if (error) {
       return (
         <div>
-          <HeaderBar title={title} />
           <div style={loading}>
             Problem fetching user data. Please login again.
           </div>
@@ -136,7 +137,6 @@ class Profile extends Component {
     if (isLoading) {
       return (
         <div>
-          <HeaderBar title={title} />
           <div style={loading}>Loading User Data...</div>
         </div>
       );
@@ -146,7 +146,6 @@ class Profile extends Component {
     }
     return (
       <div>
-        <HeaderBar title={title} />
         <Table>
           <TableBody>
             <TableRow>
@@ -159,7 +158,7 @@ class Profile extends Component {
             </TableRow>
             <TableRow>
               <TableCell>Password</TableCell>
-              <TableCell style={{ WebkitTextSecurity: 'disc' }}>
+              <TableCell style={{ WebkitTextSecurity: "disc" }}>
                 {password}
               </TableCell>
             </TableRow>

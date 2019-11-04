@@ -1,9 +1,9 @@
-import React from 'react';
-import { withRouter } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import AccountBoxIco from '@material-ui/icons/AccountBox';
+import React from "react";
+import { withRouter } from "react-router-dom";
+import Button from "@material-ui/core/Button";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import AccountBoxIco from "@material-ui/icons/AccountBox";
 
 class UserMenu extends React.Component {
   state = {
@@ -19,21 +19,21 @@ class UserMenu extends React.Component {
   };
   handleLogin = () => {
     this.setState({ anchorEl: null });
-    this.props.history.push('/login');
+    this.props.history.push("/login");
   };
   handleLogout = () => {
     this.setState({ anchorEl: null });
-    localStorage.removeItem('JWT');
-    localStorage.removeItem('username');
-    this.props.history.push('/');
+    localStorage.removeItem("JWT");
+    localStorage.removeItem("username");
+    this.props.history.push("/");
   };
   handleAdmin = () => {
     this.setState({ anchorEl: null });
-    this.props.history.push('/admin');
+    this.props.history.push("/admin");
   };
   handleMyAccount = () => {
     this.setState({ anchorEl: null });
-    this.props.history.push(`/userProfile/${localStorage.getItem('username')}`);
+    this.props.history.push(`/userProfile/${localStorage.getItem("username")}`);
   };
   render() {
     const { anchorEl } = this.state;
@@ -41,13 +41,13 @@ class UserMenu extends React.Component {
     return (
       <div>
         <Button
-          aria-owns={anchorEl ? 'user-menu' : undefined}
+          aria-owns={anchorEl ? "user-menu" : undefined}
           aria-haspopup="true"
           onClick={this.handleClick}
         >
           <AccountBoxIco color="action" />
         </Button>
-        {localStorage.getItem('JWT') != null ? (
+        {localStorage.getItem("JWT") != null ? (
           <Menu
             id="user-menu"
             anchorEl={anchorEl}

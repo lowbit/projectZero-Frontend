@@ -1,59 +1,59 @@
 /* eslint-disable no-console */
 /* eslint-disable react/destructuring-assignment */
 
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
-import TextField from '@material-ui/core/TextField';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+import TextField from "@material-ui/core/TextField";
 
 import {
   LinkButtons,
   updateButton,
   homeButton,
   loginButton,
-  HeaderBar,
   forgotButton,
   inputStyle,
-  SubmitButtons,
-} from '../../components';
+  SubmitButtons
+} from "../../components";
 
 const loading = {
-  margin: '1em',
-  fontSize: '24px',
+  margin: "1em",
+  fontSize: "24px"
 };
 
-const title = {
-  pageTitle: 'Password Reset Screen',
+const headerTitle = {
+  pageTitle: "Password Reset Screen"
 };
 
 export default class ResetPassword extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
-      username: '',
-      password: '',
+      username: "",
+      password: "",
       updated: false,
       isLoading: true,
-      error: false,
+      error: false
     };
+    this.props.setHeader(headerTitle);
   }
 
   async componentDidMount() {
     await axios
-      .get(process.env.REACT_APP_API_URL+'/reset', {
+      .get(process.env.REACT_APP_API_URL + "/reset", {
         params: {
-          resetPasswordToken: this.props.match.params.token,
-        },
+          resetPasswordToken: this.props.match.params.token
+        }
       })
       .then(response => {
         console.log(response);
-        if (response.data.message === 'password reset link a-ok') {
+        if (response.data.message === "password reset link a-ok") {
           this.setState({
             username: response.data.username,
             updated: false,
             isLoading: false,
-            error: false,
+            error: false
           });
         }
       })
@@ -62,36 +62,36 @@ export default class ResetPassword extends Component {
         this.setState({
           updated: false,
           isLoading: false,
-          error: true,
+          error: true
         });
       });
   }
 
   handleChange = name => event => {
     this.setState({
-      [name]: event.target.value,
+      [name]: event.target.value
     });
   };
 
   updatePassword = e => {
     e.preventDefault();
     axios
-      .put(process.env.REACT_APP_API_URL+'/updatePasswordViaEmail', {
+      .put(process.env.REACT_APP_API_URL + "/updatePasswordViaEmail", {
         username: this.state.username,
         password: this.state.password,
-        resetPasswordToken: this.props.match.params.token,
+        resetPasswordToken: this.props.match.params.token
       })
       .then(response => {
         console.log(response.data);
-        if (response.data.message === 'password updated') {
+        if (response.data.message === "password updated") {
           this.setState({
             updated: true,
-            error: false,
+            error: false
           });
         } else {
           this.setState({
             updated: false,
-            error: true,
+            error: true
           });
         }
       })
@@ -106,7 +106,6 @@ export default class ResetPassword extends Component {
     if (error) {
       return (
         <div>
-          <HeaderBar title={title} />
           <div style={loading}>
             <h4>Problem resetting password. Please send another reset link.</h4>
             <LinkButtons
@@ -126,20 +125,18 @@ export default class ResetPassword extends Component {
     if (isLoading) {
       return (
         <div>
-          <HeaderBar title={title} />
           <div style={loading}>Loading User Data...</div>
         </div>
       );
     }
     return (
       <div>
-        <HeaderBar title={title} />
         <form className="password-form" onSubmit={this.updatePassword}>
           <TextField
             style={inputStyle}
             id="password"
             label="password"
-            onChange={this.handleChange('password')}
+            onChange={this.handleChange("password")}
             value={password}
             type="password"
           />
@@ -172,7 +169,7 @@ ResetPassword.propTypes = {
   // eslint-disable-next-line react/require-default-props
   match: PropTypes.shape({
     params: PropTypes.shape({
-      token: PropTypes.string.isRequired,
-    }),
-  }),
+      token: PropTypes.string.isRequired
+    })
+  })
 };
