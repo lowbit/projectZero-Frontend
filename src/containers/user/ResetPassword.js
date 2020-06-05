@@ -1,31 +1,33 @@
-/* eslint-disable no-console */
-/* eslint-disable react/destructuring-assignment */
-
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
-import TextField from "@material-ui/core/TextField";
+import { Redirect } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 
 import {
-  LinkButtons,
-  updateButton,
-  homeButton,
-  loginButton,
-  forgotButton,
-  inputStyle,
-  SubmitButtons
-} from "../../components";
+  Grid,
+  Card,
+  Typography,
+  TextField,
+  Toolbar,
+  Button,
+  CardActions
+} from "@material-ui/core";
 
-const loading = {
-  margin: "1em",
-  fontSize: "24px"
-};
+const styles = theme => ({
+  CardActions: {
+    justifyContent: "space-between",
+    width: "100%",
+    flexDirection: "row-reverse"
+  }
+});
 
 const headerTitle = {
   pageTitle: "Password Reset Screen"
 };
 
-export default class ResetPassword extends Component {
+class ResetPassword extends Component {
   constructor(props) {
     super(props);
 
@@ -101,75 +103,129 @@ export default class ResetPassword extends Component {
   };
 
   render() {
-    const { password, error, isLoading, updated } = this.state;
+    const { password, error, updated, isLoading } = this.state;
+    const { classes } = this.props;
 
     if (error) {
       return (
-        <div>
-          <div style={loading}>
-            <h4>Problem resetting password. Please send another reset link.</h4>
-            <LinkButtons
-              buttonText="Go Home"
-              buttonStyle={homeButton}
-              link="/"
-            />
-            <LinkButtons
-              buttonStyle={forgotButton}
-              buttonText="Forgot Password?"
-              link="/forgotPassword"
-            />
-          </div>
-        </div>
-      );
-    }
-    if (isLoading) {
-      return (
-        <div>
-          <div style={loading}>Loading User Data...</div>
-        </div>
-      );
-    }
-    return (
-      <div>
-        <form className="password-form" onSubmit={this.updatePassword}>
-          <TextField
-            style={inputStyle}
-            id="password"
-            label="password"
-            onChange={this.handleChange("password")}
-            value={password}
-            type="password"
-          />
-          <SubmitButtons
-            buttonStyle={updateButton}
-            buttonText="Update Password"
-          />
-        </form>
+        <Fragment>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            xs={12}
+          >
+            <Grid item xs={12} md={4} lg={3}>
+              <Card>
+                <Toolbar>
+                  <Typography variant="h6" color="primary">
+                    Reset Password
+                  </Typography>
+                </Toolbar>
+                <form className="password-form">
+                  <Typography variant="p">
+                    Problem resetting password. Please send another reset link.
+                  </Typography>
+                  <CardActions className={classes.CardActions}>
+                    <Link to="/login">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        className={classes.button}
+                      >
+                        Login
+                      </Button>
+                    </Link>
 
-        {updated && (
-          <div>
-            <p>
-              Your password has been successfully reset, please try logging in
-              again.
-            </p>
-            <LinkButtons
-              buttonStyle={loginButton}
-              buttonText="Login"
-              link="/login"
-            />
-          </div>
-        )}
-        <LinkButtons buttonText="Go Home" buttonStyle={homeButton} link="/" />
-      </div>
-    );
+                    <Link to="/">
+                      <Button
+                        variant="text"
+                        size="small"
+                        className={classes.button}
+                      >
+                        Go Home
+                      </Button>
+                    </Link>
+                  </CardActions>
+                </form>
+
+                {updated && <Redirect to={`/admin`} />}
+              </Card>
+            </Grid>
+          </Grid>
+        </Fragment>
+      );
+    }
+    if (!error && !isLoading) {
+      return (
+        <Fragment>
+          <Grid
+            container
+            spacing={0}
+            direction="column"
+            alignItems="center"
+            justify="center"
+            xs={12}
+          >
+            <Grid item xs={12} md={4} lg={3}>
+              <Card>
+                <Toolbar>
+                  <Typography variant="h6" color="primary">
+                    Reset Password
+                  </Typography>
+                </Toolbar>
+                <form className="password-form" onSubmit={this.updatePassword}>
+                  <TextField
+                    id="password"
+                    label="password"
+                    onChange={this.handleChange("password")}
+                    value={password}
+                    type="password"
+                    fullWidth
+                  />
+                  <CardActions className={classes.CardActions}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      size="small"
+                      className={classes.button}
+                      type="submit"
+                    >
+                      Update Password
+                    </Button>
+
+                    <Link to="/">
+                      <Button
+                        variant="text"
+                        size="small"
+                        className={classes.button}
+                      >
+                        Go Home
+                      </Button>
+                    </Link>
+                  </CardActions>
+                </form>
+
+                {updated && <Redirect to={`/admin`} />}
+              </Card>
+            </Grid>
+          </Grid>
+        </Fragment>
+      );
+    }
+    return <Fragment />;
   }
 }
 
 ResetPassword.propTypes = {
-  // eslint-disable-next-line react/require-default-props
   match: PropTypes.shape({
     params: PropTypes.shape({
       token: PropTypes.string.isRequired
     })
   })
 };
+
+export default withStyles(styles)(ResetPassword);

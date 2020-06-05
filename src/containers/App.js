@@ -23,7 +23,8 @@ const theme = createMuiTheme({
     MuiTypography: {
       color: "textPrimary"
     }
-  }
+  },
+  overrides: {}
 });
 const styles = theme => ({
   SnackbarFont: {

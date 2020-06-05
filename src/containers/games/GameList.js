@@ -29,10 +29,16 @@ class GameList extends Component {
       .then(response => {
         this.setState({
           games: response.data.games,
-          isLoading: false
+          isLoading: false,
+          error: false
         });
       })
-      .catch(error => {});
+      .catch(error => {
+        if (error.response) console.error(error.response.data);
+        this.setState({
+          error: true
+        });
+      });
   }
 
   render() {

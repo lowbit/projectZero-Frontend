@@ -38,17 +38,17 @@ const styles = theme => ({
   }
 });
 const headerTitle = {
-  pageTitle: "Game Edit"
+  pageTitle: "Tier List Edit"
 };
-class GameEdit extends Component {
+class TierListEdit extends Component {
   constructor(props) {
     super(props);
     this.state = {
       id: "",
+      GameId: "",
       title: "",
-      description: "",
+      additionalInfo: "",
       imgPath: "",
-      releaseDate: null,
       createdAt: null,
       updatedAt: null,
       startingState: {},
@@ -57,7 +57,7 @@ class GameEdit extends Component {
     };
     this.props.setHeader(headerTitle);
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.gameAddUpdate = this.gameAddUpdate.bind(this);
+    this.tierListAddUpdate = this.tierListAddUpdate.bind(this);
     this.returnStartingState = this.returnStartingState.bind(this);
     this.handleConfirmDelete = this.handleConfirmDelete.bind(this);
   }
@@ -65,10 +65,10 @@ class GameEdit extends Component {
     this.setState({
       startingState: {
         id: this.state.id,
+        GameId: this.state.GameId,
         title: this.state.title,
-        description: this.state.description,
+        additionalInfo: this.state.additionalInfo,
         imgPath: this.state.imgPath,
-        releaseDate: this.state.releaseDate,
         createdAt: this.state.createdAt,
         updatedAt: this.state.updatedAt
       }
@@ -77,64 +77,53 @@ class GameEdit extends Component {
   returnStartingState() {
     this.setState({
       id: this.state.startingState.id,
+      GameId: this.state.startingState.GameId,
       title: this.state.startingState.title,
-      description: this.state.startingState.description,
+      additionalInfo: this.state.startingState.additionalInfo,
       imgPath: this.state.startingState.imgPath,
-      releaseDate: this.state.startingState.releaseDate,
       createdAt: this.state.startingState.createdAt,
       updatedAt: this.state.startingState.updatedAt
     });
   }
   async componentDidMount() {
-    const { id } = this.props.match.params;
+    const { id, tierlistid } = this.props.match.params;
     if (id) {
-      await axios
-        .get(process.env.REACT_APP_API_URL + "/getGame/" + id)
-        .then(res => {
-          this.setState({
-            id: res.data.game.id,
-            title: res.data.game.title,
-            description: res.data.game.description,
-            imgPath: res.data.game.imgPath,
-            releaseDate: res.data.game.releaseDate,
-            createdAt: res.data.game.createdAt,
-            updatedAt: res.data.game.updatedAt
-          });
-          this.setStartingState();
-        })
-        .catch(err => {
-          if (err.response) {
-            console.error(err.response.data);
-          }
-        });
-    } else {
       this.setState({
-        id: "",
-        title: "",
-        description: "",
-        imgPath: "",
-        releaseDate: format(new Date(), "yyyy-MM-dd"),
-        createdAt: null,
-        updatedAt: null
+        GameId: id
       });
-      this.setStartingState();
+      if (id && tierlistid) {
+        //Implement for edit funct.
+        await axios
+          .get(process.env.REACT_APP_API_URL + "/getTierList/" + tierlistid)
+          .then(res => {
+            this.setState({
+              id: res.data.tierlist.id,
+              GameId: res.data.tierlist.GameId,
+              title: res.data.tierlist.title,
+              additionalInfo: res.data.tierlist.additionalInfo,
+              imgPath: res.data.tierlist.imgPath,
+              createdAt: res.data.tierlist.createdAt,
+              updatedAt: res.data.tierlist.updatedAt
+            });
+            this.setStartingState();
+          })
+          .catch(err => {
+            if (err.response) {
+              console.error(err.response.data);
+            }
+          });
+      }
     }
   }
 
-  handleInputChange(event, dateName) {
-    if (!dateName) {
-      const target = event.target;
-      const value = target.value;
-      const name = target.name;
+  handleInputChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
 
-      this.setState({
-        [name]: value
-      });
-    } else {
-      this.setState({
-        [dateName]: format(new Date(event), "yyyy-MM-dd")
-      });
-    }
+    this.setState({
+      [name]: value
+    });
   }
 
   handleCreatedAtChange = event => {
@@ -143,7 +132,7 @@ class GameEdit extends Component {
     });
   };
 
-  gameAddUpdate() {
+  tierListAddUpdate() {
     const accessString = localStorage.getItem("JWT");
     const isUpdate = this.state.id ? true : false;
     if (accessString === null) {
@@ -151,21 +140,21 @@ class GameEdit extends Component {
         error: true
       });
     } else {
-      let game = {
+      let tierlist = {
         id: this.state.id,
+        GameId: this.state.GameId,
         title: this.state.title,
-        description: this.state.description,
+        additionalInfo: this.state.additionalInfo,
         imgPath: this.state.imgPath,
-        releaseDate: this.state.releaseDate,
         createdAt: this.state.createdAt,
         updatedAt: this.state.updatedAt
       };
       if (isUpdate) {
         axios
           .put(
-            process.env.REACT_APP_API_URL + "/updateGame",
+            process.env.REACT_APP_API_URL + "/updateTierList",
             {
-              game: game
+              tierlist: tierlist
             },
             {
               headers: { Authorization: `JWT ${accessString}` }
@@ -174,21 +163,21 @@ class GameEdit extends Component {
           .then(response => {
             this.setState({
               id: response.data.result.id,
+              GameId: response.data.result.GameId,
               title: response.data.result.title,
-              description: response.data.result.description,
+              additionalInfo: response.data.result.additionalInfo,
               imgPath: response.data.result.imgPath,
-              releaseDate: response.data.result.releaseDate,
               createdAt: response.data.result.createdAt,
               updatedAt: response.data.result.updatedAt
             });
-            this.props.enqueueSnackbar("Successfully updated game.", {
+            this.props.enqueueSnackbar("Successfully updated tier list.", {
               variant: "success",
               autoHideDuration: 3000
             });
           })
           .catch(error => {
             this.props.enqueueSnackbar(
-              error.message ? error.message : "Failed updating game.",
+              error.message ? error.message : "Failed updating tier list.",
               {
                 variant: "error",
                 autoHideDuration: 3000
@@ -198,16 +187,25 @@ class GameEdit extends Component {
       } else {
         axios
           .post(
-            process.env.REACT_APP_API_URL + "/addGame",
+            process.env.REACT_APP_API_URL + "/addTierList",
             {
-              game: game
+              tierlist: tierlist
             },
             {
               headers: { Authorization: `JWT ${accessString}` }
             }
           )
           .then(response => {
-            this.props.enqueueSnackbar("Successfully added game.", {
+            this.setState({
+              id: response.data.result.id,
+              GameId: response.data.result.GameId,
+              title: response.data.result.title,
+              additionalInfo: response.data.result.additionalInfo,
+              imgPath: response.data.result.imgPath,
+              createdAt: response.data.result.createdAt,
+              updatedAt: response.data.result.updatedAt
+            });
+            this.props.enqueueSnackbar("Successfully added tier list.", {
               variant: "success",
               autoHideDuration: 3000
             });
@@ -216,7 +214,7 @@ class GameEdit extends Component {
             this.props.enqueueSnackbar(
               error.response.data.message
                 ? error.response.data.message
-                : "Failed adding game.",
+                : "Failed adding tierlist.",
               {
                 variant: "error",
                 autoHideDuration: 3000
@@ -226,7 +224,7 @@ class GameEdit extends Component {
       }
     }
   }
-  deleteGame() {
+  deleteTierList() {
     //add confirmation
     const accessString = localStorage.getItem("JWT");
     if (accessString === null) {
@@ -235,14 +233,14 @@ class GameEdit extends Component {
       });
     }
     axios
-      .delete(process.env.REACT_APP_API_URL + "/deleteGame", {
+      .delete(process.env.REACT_APP_API_URL + "/deleteTierList", {
         params: {
           id: this.state.id
         },
         headers: { Authorization: `JWT ${accessString}` }
       })
       .then(response => {
-        this.props.enqueueSnackbar("Successfully deleted game.", {
+        this.props.enqueueSnackbar("Successfully deleted tier list.", {
           variant: "success",
           autoHideDuration: 3000
         });
@@ -251,23 +249,23 @@ class GameEdit extends Component {
         });
       })
       .catch(error => {
-        this.props.enqueueSnackbar("Failed deleting game.", {
+        this.props.enqueueSnackbar("Failed deleting tier list.", {
           variant: "error",
           autoHideDuration: 3000
         });
       });
   }
   handleConfirmDelete() {
-    this.deleteGame();
+    this.deleteTierList();
     this.setState({ openConfirmationDelete: false });
   }
   render() {
     const {
       id,
+      GameId,
       title,
-      description,
+      additionalInfo,
       imgPath,
-      releaseDate,
       createdAt,
       updatedAt,
       deleted,
@@ -295,8 +293,8 @@ class GameEdit extends Component {
                 </IconButton>
                 {id && (
                   <IconButton
-                    aria-label="Delete Game"
-                    title="Delete Game"
+                    aria-label="Delete Tier List"
+                    title="Delete Tier List"
                     onClick={e =>
                       this.setState({ openConfirmationDelete: true })
                     }
@@ -314,23 +312,39 @@ class GameEdit extends Component {
                 <IconButton
                   aria-label="Save"
                   title="Save"
-                  onClick={this.gameAddUpdate}
+                  onClick={this.tierListAddUpdate}
                 >
                   <SaveIcon />
                 </IconButton>
               </ListItemSecondaryAction>
             </Toolbar>
             <form noValidate autoComplete="off">
-              <TextField
-                disabled
-                id="id"
-                label="Id"
-                value={id}
-                name="id"
-                onChange={this.handleInputChange}
-                margin="normal"
-                fullWidth
-              />
+              <Grid container spacing={3}>
+                <Grid item xs={6}>
+                  <TextField
+                    disabled
+                    id="id"
+                    label="Id"
+                    value={id}
+                    name="id"
+                    onChange={this.handleInputChange}
+                    margin="normal"
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    disabled
+                    id="gameid"
+                    label="Game Id"
+                    value={GameId}
+                    name="gameid"
+                    onChange={this.handleInputChange}
+                    margin="normal"
+                    fullWidth
+                  />
+                </Grid>
+              </Grid>
               <TextField
                 id="title"
                 label="Title"
@@ -341,12 +355,12 @@ class GameEdit extends Component {
                 fullWidth
               />
               <TextField
-                id="description"
-                label="Description"
+                id="additionalInfo"
+                label="Additional Info"
                 multiline
                 rows="3"
-                value={description}
-                name="description"
+                value={additionalInfo}
+                name="additionalInfo"
                 onChange={this.handleInputChange}
                 margin="normal"
                 fullWidth
@@ -356,13 +370,6 @@ class GameEdit extends Component {
                 label="Image Path"
                 value={imgPath}
                 onUpload={e => this.setState({ imgPath: e })}
-              />
-              <BasicDatePicker
-                label="Release Date"
-                name="releaseDate"
-                value={releaseDate}
-                onChange={this.handleInputChange}
-                margin="normal"
               />
 
               <Grid container spacing={3}>
@@ -422,4 +429,4 @@ class GameEdit extends Component {
   }
 }
 
-export default withSnackbar(withStyles(styles)(GameEdit));
+export default withSnackbar(withStyles(styles)(TierListEdit));

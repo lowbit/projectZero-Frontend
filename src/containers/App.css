@@ -24,3 +24,20 @@
 .mainContainer {
   padding: 24px;
 }
+
+.MuiLinearProgress-root {
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 100%;
+  position: absolute !important;
+  z-index: 10000;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 12px;
+}

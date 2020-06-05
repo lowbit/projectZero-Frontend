@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import Axios from "axios";
 import {
@@ -71,7 +71,7 @@ class AdminHome extends Component {
     const { classes } = this.props;
     const { dense } = this.state;
     return (
-      <div>
+      <Fragment>
         <Grid container spacing={3}>
           <Grid item xs={6}>
             <Card>
@@ -102,6 +102,11 @@ class AdminHome extends Component {
                               <EditIcon />
                             </IconButton>
                           </Link>
+                          <Link to={`/tierListEdit/${game.id}`}>
+                            <IconButton aria-label="Add Tier List">
+                              <AddIcon />
+                            </IconButton>
+                          </Link>
                         </ListItemSecondaryAction>
                       </ListItem>
                     </div>
@@ -114,7 +119,7 @@ class AdminHome extends Component {
             <Card>aa</Card>
           </Grid>
         </Grid>
-      </div>
+      </Fragment>
     );
   }
 }
